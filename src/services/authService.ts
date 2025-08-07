@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { User, UserWithStats } from '../lib/supabase';
+import type { UserWithStats } from '../lib/supabase';
 
 /**
  * Sanitize user input to prevent potential security issues

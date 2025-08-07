@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Target, Users, Award, ArrowRight, CheckCircle, Clock, Star } from 'lucide-react';
+import { Target, Users, ArrowRight, CheckCircle, Clock, Star } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const HomePage: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -26,12 +29,14 @@ const HomePage: React.FC = () => {
                   Bắt đầu luyện thi
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
-                <Link
-                  to="/auth"
-                  className="border border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center justify-center"
-                >
-                  Tạo tài khoản miễn phí
-                </Link>
+                {!isAuthenticated && (
+                  <Link
+                    to="/auth"
+                    className="border border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center justify-center"
+                  >
+                    Tạo tài khoản miễn phí
+                  </Link>
+                )}
               </div>
             </div>
             <div className="relative">
