@@ -8,6 +8,7 @@ import TestDashboard from './components/TestDashboard';
 import ReadingSection from './components/skills/ReadingSection';
 import WritingSection from './components/skills/WritingSection';
 import ListeningSection from './components/skills/ListeningSection';
+import ListeningTest from './components/listening/ListeningTest';
 import SpeakingSection from './components/skills/SpeakingSection';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/test/reading" element={<ReadingSection />} />
             <Route path="/test/writing" element={<WritingSection />} />
             <Route path="/test/listening" element={<ListeningSection />} />
+            <Route path="/test/listening/practice" element={<ListeningTest />} />
             <Route path="/test/speaking" element={<SpeakingSection />} />
           </Routes>
         </div>

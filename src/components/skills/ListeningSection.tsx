@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Clock, Headphones, CheckCircle, Play } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ListeningSection: React.FC = () => {
   const [selectedTest, setSelectedTest] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const listeningTests = [
     {
@@ -166,7 +167,10 @@ const ListeningSection: React.FC = () => {
                   <p className="text-purple-100 mb-4">
                     You have selected a listening test. Make sure you have good headphones and a quiet environment.
                   </p>
-                  <button className="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors">
+                  <button 
+                    onClick={() => navigate('/test/listening/practice')}
+                    className="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
+                  >
                     Begin Listening Test
                   </button>
                 </div>
