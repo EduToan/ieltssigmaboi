@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                 }`}
               >
-                Home
+                Trang chủ
               </Link>
               <Link
                 to="/test"
@@ -109,18 +109,18 @@ const Navbar: React.FC = () => {
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                 }`}
               >
-                Practice Tests
+                Luyện thi
               </Link>
               {isAuthenticated ? (
                 <div className="space-y-2">
                   <div className="px-3 py-2 text-sm text-gray-600">
-                    Welcome, <span className="font-medium">{user?.name}</span>
+                    Xin chào, <span className="font-medium">{user?.name}</span>
                   </div>
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
                   >
-                    Logout
+                    Đăng xuất
                   </button>
                 </div>
               ) : (
@@ -129,7 +129,7 @@ const Navbar: React.FC = () => {
                   onClick={() => setIsOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                 >
-                  Sign In
+                  Đăng nhập
                 </Link>
               )}
             </div>

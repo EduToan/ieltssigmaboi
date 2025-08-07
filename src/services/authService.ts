@@ -55,14 +55,14 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
     if (!sanitizedName || sanitizedName.length < 2) {
       return {
         success: false,
-        message: 'Name must be at least 2 characters long and contain valid characters.'
+        message: 'Tên phải có ít nhất 2 ký tự và chứa các ký tự hợp lệ.'
       };
     }
 
     if (!isValidEmail(sanitizedEmail)) {
       return {
         success: false,
-        message: 'Please provide a valid email address.'
+        message: 'Vui lòng cung cấp địa chỉ email hợp lệ.'
       };
     }
 
@@ -81,7 +81,7 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
     if (existingUser) {
       return {
         success: false,
-        message: 'An account with this email already exists. Please try logging in instead.'
+        message: 'Tài khoản với email này đã tồn tại. Vui lòng thử đăng nhập.'
       };
     }
 
@@ -123,14 +123,14 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
 
     return {
       success: true,
-      message: 'Account created successfully! Welcome to IELTS Sigma Boy!',
+      message: 'Tạo tài khoản thành công! Chào mừng đến với IELTS Sigma Boy!',
       user: userWithStats
     };
   } catch (error) {
     console.error('Registration error:', error);
     return {
       success: false,
-      message: 'Failed to create account. Please try again.'
+      message: 'Không thể tạo tài khoản. Vui lòng thử lại.'
     };
   }
 };
@@ -156,7 +156,7 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
     if (userError || !user) {
       return {
         success: false,
-        message: 'Invalid email or password. Please check your credentials and try again.'
+        message: 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra và thử lại.'
       };
     }
 
@@ -166,7 +166,7 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
     if (user.password !== sanitizedPassword) {
       return {
         success: false,
-        message: 'Invalid email or password. Please check your credentials and try again.'
+        message: 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra và thử lại.'
       };
     }
 
@@ -175,14 +175,14 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
 
     return {
       success: true,
-      message: `Welcome back, ${user.name}!`,
+      message: `Chào mừng trở lại, ${user.name}!`,
       user: userWithStats
     };
   } catch (error) {
     console.error('Login error:', error);
     return {
       success: false,
-      message: 'Login failed. Please try again.'
+      message: 'Đăng nhập thất bại. Vui lòng thử lại.'
     };
   }
 };
@@ -229,10 +229,10 @@ export const isValidEmail = (email: string): boolean => {
  */
 export const validatePassword = (password: string): { isValid: boolean; message: string } => {
   if (password.length < 6) {
-    return { isValid: false, message: 'Password must be at least 6 characters long' };
+    return { isValid: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' };
   }
   if (password.length > 128) {
-    return { isValid: false, message: 'Password must be less than 128 characters' };
+    return { isValid: false, message: 'Mật khẩu phải ít hơn 128 ký tự' };
   }
   return { isValid: true, message: '' };
 };

@@ -5,48 +5,52 @@ import { BookOpen, PenTool, Headphones, Mic, ArrowRight, Clock, Target, Users } 
 const TestDashboard: React.FC = () => {
   const skills = [
     {
-      name: 'Reading',
+      name: 'Đọc hiểu',
+      nameEn: 'Reading',
       icon: BookOpen,
       path: '/test/reading',
       color: 'from-blue-500 to-blue-600',
       hoverColor: 'hover:from-blue-600 hover:to-blue-700',
-      description: 'Improve comprehension with academic and general texts',
-      duration: '60 minutes',
-      questions: '40 questions',
-      testTypes: ['Academic', 'General Training']
+      description: 'Cải thiện khả năng đọc hiểu với các văn bản học thuật và tổng quát',
+      duration: '60 phút',
+      questions: '40 câu hỏi',
+      testTypes: ['Học thuật', 'Tổng quát']
     },
     {
-      name: 'Writing',
+      name: 'Viết',
+      nameEn: 'Writing',
       icon: PenTool,
       path: '/test/writing',
       color: 'from-green-500 to-green-600',
       hoverColor: 'hover:from-green-600 hover:to-green-700',
-      description: 'Master essay writing and task response skills',
-      duration: '60 minutes',
-      questions: '2 tasks',
+      description: 'Thành thạo kỹ năng viết luận và trả lời câu hỏi',
+      duration: '60 phút',
+      questions: '2 bài tập',
       testTypes: ['Task 1', 'Task 2']
     },
     {
-      name: 'Listening',
+      name: 'Nghe hiểu',
+      nameEn: 'Listening',
       icon: Headphones,
       path: '/test/listening',
       color: 'from-purple-500 to-purple-600',
       hoverColor: 'hover:from-purple-600 hover:to-purple-700',
-      description: 'Enhance listening skills with authentic audio',
-      duration: '30 minutes',
-      questions: '40 questions',
-      testTypes: ['Conversations', 'Monologues']
+      description: 'Nâng cao kỹ năng nghe với âm thanh thực tế',
+      duration: '30 phút',
+      questions: '40 câu hỏi',
+      testTypes: ['Hội thoại', 'Độc thoại']
     },
     {
-      name: 'Speaking',
+      name: 'Nói',
+      nameEn: 'Speaking',
       icon: Mic,
       path: '/test/speaking',
       color: 'from-orange-500 to-orange-600',
       hoverColor: 'hover:from-orange-600 hover:to-orange-700',
-      description: 'Practice speaking with AI-powered feedback',
-      duration: '11-14 minutes',
-      questions: '3 parts',
-      testTypes: ['Interview', 'Long Turn', 'Discussion']
+      description: 'Luyện nói với phản hồi từ AI',
+      duration: '11-14 phút',
+      questions: '3 phần',
+      testTypes: ['Phỏng vấn', 'Nói dài', 'Thảo luận']
     }
   ];
 
@@ -56,11 +60,11 @@ const TestDashboard: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            IELTS Practice Tests
+            Luyện thi IELTS
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Master all four IELTS skills with our comprehensive practice tests. 
-            Each section is designed to simulate real exam conditions.
+            Luyện tập cả 4 kỹ năng IELTS với hệ thống bài thi toàn diện. 
+            Mỗi phần được thiết kế mô phỏng điều kiện thi thật.
           </p>
         </div>
 
@@ -71,21 +75,21 @@ const TestDashboard: React.FC = () => {
               <Target className="w-8 h-8 text-blue-600" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">95%</h3>
-            <p className="text-gray-600">Success Rate</p>
+            <p className="text-gray-600">Tỷ lệ thành công</p>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
             <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Users className="w-8 h-8 text-green-600" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">50K+</h3>
-            <p className="text-gray-600">Students Trained</p>
+            <p className="text-gray-600">Học viên đã luyện thi</p>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
             <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Clock className="w-8 h-8 text-purple-600" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">1000+</h3>
-            <p className="text-gray-600">Practice Questions</p>
+            <p className="text-gray-600">Câu hỏi luyện tập</p>
           </div>
         </div>
 
@@ -119,19 +123,19 @@ const TestDashboard: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <Clock className="w-5 h-5 text-gray-600 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Duration</p>
+                      <p className="text-sm text-gray-600">Thời gian</p>
                       <p className="font-semibold text-gray-900">{skill.duration}</p>
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <Target className="w-5 h-5 text-gray-600 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Format</p>
+                      <p className="text-sm text-gray-600">Định dạng</p>
                       <p className="font-semibold text-gray-900">{skill.questions}</p>
                     </div>
                   </div>
 
                   {/* Test Types */}
                   <div className="mb-6">
-                    <h4 className="font-semibold text-gray-900 mb-3">Available Formats:</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">Định dạng có sẵn:</h4>
                     <div className="flex flex-wrap gap-2">
                       {skill.testTypes.map((type, index) => (
                         <span
@@ -149,7 +153,7 @@ const TestDashboard: React.FC = () => {
                     to={skill.path}
                     className={`w-full bg-gradient-to-r ${skill.color} ${skill.hoverColor} text-white py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center group`}
                   >
-                    Start {skill.name} Practice
+                    Bắt đầu luyện {skill.name}
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
@@ -161,36 +165,36 @@ const TestDashboard: React.FC = () => {
         {/* Quick Tips */}
         <div className="mt-16 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-            Quick Tips for Success
+            Bí quyết thành công
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-blue-600 font-bold">1</span>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Time Management</h4>
-              <p className="text-sm text-gray-600">Practice under timed conditions to improve speed and accuracy</p>
+              <h4 className="font-semibold text-gray-900 mb-2">Quản lý thời gian</h4>
+              <p className="text-sm text-gray-600">Luyện tập trong điều kiện có thời gian để cải thiện tốc độ và độ chính xác</p>
             </div>
             <div className="text-center">
               <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-green-600 font-bold">2</span>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Regular Practice</h4>
-              <p className="text-sm text-gray-600">Consistent daily practice yields better results than intensive cramming</p>
+              <h4 className="font-semibold text-gray-900 mb-2">Luyện tập đều đặn</h4>
+              <p className="text-sm text-gray-600">Học đều đặn mỗi ngày sẽ hiệu quả hơn việc học dồn ép</p>
             </div>
             <div className="text-center">
               <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-purple-600 font-bold">3</span>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Analyze Mistakes</h4>
-              <p className="text-sm text-gray-600">Review incorrect answers to understand patterns and improve</p>
+              <h4 className="font-semibold text-gray-900 mb-2">Phân tích lỗi sai</h4>
+              <p className="text-sm text-gray-600">Xem lại các câu trả lời sai để hiểu rõ nguyên nhân và cải thiện</p>
             </div>
             <div className="text-center">
               <div className="bg-orange-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-orange-600 font-bold">4</span>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Mock Tests</h4>
-              <p className="text-sm text-gray-600">Take full-length practice tests to simulate exam conditions</p>
+              <h4 className="font-semibold text-gray-900 mb-2">Thi thử</h4>
+              <p className="text-sm text-gray-600">Làm bài thi thử đầy đủ để mô phỏng điều kiện thi thật</p>
             </div>
           </div>
         </div>

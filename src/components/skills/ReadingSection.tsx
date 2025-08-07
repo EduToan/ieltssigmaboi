@@ -8,47 +8,47 @@ const ReadingSection: React.FC = () => {
   const practiceTests = [
     {
       id: 'academic-1',
-      title: 'Academic Reading Test 1',
-      type: 'Academic',
-      difficulty: 'Intermediate',
+      title: 'Bài thi đọc hiểu học thuật 1',
+      type: 'Học thuật',
+      difficulty: 'Trung bình',
       passages: 3,
       duration: 60,
-      description: 'Practice with academic texts about technology, environment, and social sciences.'
+      description: 'Luyện tập với các văn bản học thuật về công nghệ, môi trường và khoa học xã hội.'
     },
     {
       id: 'general-1',
-      title: 'General Training Reading Test 1',
-      type: 'General Training',
-      difficulty: 'Beginner',
+      title: 'Bài thi đọc hiểu tổng quát 1',
+      type: 'Tổng quát',
+      difficulty: 'Cơ bản',
       passages: 3,
       duration: 60,
-      description: 'Real-world texts including advertisements, job descriptions, and articles.'
+      description: 'Văn bản thực tế bao gồm quảng cáo, mô tả công việc và bài báo.'
     },
     {
       id: 'academic-2',
-      title: 'Academic Reading Test 2',
-      type: 'Academic',
-      difficulty: 'Advanced',
+      title: 'Bài thi đọc hiểu học thuật 2',
+      type: 'Học thuật',
+      difficulty: 'Nâng cao',
       passages: 3,
       duration: 60,
-      description: 'Complex academic passages with challenging vocabulary and concepts.'
+      description: 'Các đoạn văn học thuật phức tạp với từ vựng và khái niệm khó.'
     }
   ];
 
   const questionTypes = [
-    'Multiple Choice',
-    'True/False/Not Given',
-    'Yes/No/Not Given',
-    'Matching Headings',
-    'Matching Information',
-    'Matching Features',
-    'Sentence Completion',
-    'Summary Completion',
-    'Note Completion',
-    'Table Completion',
-    'Flow Chart Completion',
-    'Diagram Labelling',
-    'Short Answer Questions'
+    'Trắc nghiệm',
+    'Đúng/Sai/Không đề cập',
+    'Có/Không/Không đề cập',
+    'Ghép tiêu đề',
+    'Ghép thông tin',
+    'Ghép đặc điểm',
+    'Hoàn thành câu',
+    'Hoàn thành tóm tắt',
+    'Hoàn thành ghi chú',
+    'Hoàn thành bảng',
+    'Hoàn thành sơ đồ',
+    'Gắn nhãn biểu đồ',
+    'Câu hỏi trả lời ngắn'
   ];
 
   return (
@@ -61,11 +61,11 @@ const ReadingSection: React.FC = () => {
             className="flex items-center text-blue-600 hover:text-blue-700 font-medium mr-4"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Tests
+            Quay lại bài thi
           </Link>
           <div className="flex items-center">
             <BookOpen className="w-8 h-8 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-900">Reading Practice</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Luyện đọc hiểu</h1>
           </div>
         </div>
 
@@ -74,7 +74,7 @@ const ReadingSection: React.FC = () => {
           <div className="lg:col-span-2">
             {/* Test Selection */}
             <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Choose a Practice Test</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Chọn bài thi luyện tập</h2>
               <div className="space-y-6">
                 {practiceTests.map((test) => (
                   <div
@@ -104,16 +104,16 @@ const ReadingSection: React.FC = () => {
                         <div className="flex items-center space-x-6 text-sm text-gray-500">
                           <div className="flex items-center">
                             <Clock className="w-4 h-4 mr-1" />
-                            {test.duration} minutes
+                           {test.duration} phút
                           </div>
                           <div className="flex items-center">
                             <BookOpen className="w-4 h-4 mr-1" />
-                            {test.passages} passages
+                           {test.passages} đoạn văn
                           </div>
                           <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            test.difficulty === 'Beginner'
+                           test.difficulty === 'Cơ bản'
                               ? 'bg-green-100 text-green-700'
-                              : test.difficulty === 'Intermediate'
+                             : test.difficulty === 'Trung bình'
                               ? 'bg-yellow-100 text-yellow-700'
                               : 'bg-red-100 text-red-700'
                           }`}>
@@ -131,12 +131,12 @@ const ReadingSection: React.FC = () => {
 
               {selectedTest && (
                 <div className="mt-8 p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl text-white">
-                  <h3 className="text-lg font-semibold mb-2">Ready to Start?</h3>
+                  <h3 className="text-lg font-semibold mb-2">Sẵn sàng bắt đầu?</h3>
                   <p className="text-blue-100 mb-4">
-                    You have selected a practice test. Make sure you have 60 minutes available for the complete test.
+                    Bạn đã chọn một bài thi luyện tập. Hãy đảm bảo bạn có 60 phút để hoàn thành bài thi.
                   </p>
                   <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
-                    Begin Reading Test
+                    Bắt đầu bài thi đọc
                   </button>
                 </div>
               )}
@@ -147,22 +147,22 @@ const ReadingSection: React.FC = () => {
           <div className="space-y-6">
             {/* Test Format Info */}
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Reading Test Format</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Định dạng bài thi đọc</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Duration:</span>
-                  <span className="font-medium">60 minutes</span>
+                  <span className="text-gray-600">Thời gian:</span>
+                  <span className="font-medium">60 phút</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Questions:</span>
-                  <span className="font-medium">40 questions</span>
+                  <span className="text-gray-600">Câu hỏi:</span>
+                  <span className="font-medium">40 câu</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Passages:</span>
-                  <span className="font-medium">3 passages</span>
+                  <span className="text-gray-600">Đoạn văn:</span>
+                  <span className="font-medium">3 đoạn</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Scoring:</span>
+                  <span className="text-gray-600">Thang điểm:</span>
                   <span className="font-medium">Band 1-9</span>
                 </div>
               </div>
@@ -170,7 +170,7 @@ const ReadingSection: React.FC = () => {
 
             {/* Question Types */}
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Question Types</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Dạng câu hỏi</h3>
               <div className="space-y-2">
                 {questionTypes.map((type, index) => (
                   <div key={index} className="flex items-center text-sm">
@@ -183,23 +183,23 @@ const ReadingSection: React.FC = () => {
 
             {/* Tips */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Reading Tips</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Mẹo đọc hiểu</h3>
               <ul className="space-y-3 text-sm text-gray-700">
                 <li className="flex items-start">
                   <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  Skim passages first to get the main idea
+                  Đọc lướt đoạn văn trước để nắm ý chính
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  Look for keywords in questions and passages
+                  Tìm từ khóa trong câu hỏi và đoạn văn
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  Manage your time: 20 minutes per passage
+                  Quản lý thời gian: 20 phút mỗi đoạn văn
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  Don't spend too long on difficult questions
+                  Không dành quá nhiều thời gian cho câu khó
                 </li>
               </ul>
             </div>
