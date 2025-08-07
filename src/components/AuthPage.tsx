@@ -39,13 +39,17 @@ const AuthPage: React.FC = () => {
     // Name validation (for registration)
     if (!isLogin && !formData.name.trim()) {
       newErrors.name = 'Name is required';
-    } else if (!isLogin && formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters long';
+    } else if (!isLogin && (formData.name.trim().length < 2 || formData.name.trim().length > 50)) {
+      newErrors.name = 'Name must be between 2 and 50 characters long';
+    } else if (!isLogin && !/^[a-zA-Z\s'-]+$/.test(formData.name.trim())) {
+      newErrors.name = 'Name can only contain letters, spaces, hyphens, and apostrophes';
     }
 
     // Email validation
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
+    } else if (formData.email.length > 254) {
+      newErrors.email = 'Email address is too long';
     } else if (!isValidEmail(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
@@ -53,6 +57,8 @@ const AuthPage: React.FC = () => {
     // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
+    } else if (formData.password.length > 128) {
+      newErrors.password = 'Password is too long (maximum 128 characters)';
     } else {
       const passwordValidation = validatePassword(formData.password);
       if (!passwordValidation.isValid) {
@@ -193,6 +199,7 @@ const AuthPage: React.FC = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     disabled={isLoading}
+                    maxLength={50}
                     className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 ${
                       errors.name ? 'border-red-300 bg-red-50' : 'border-gray-300'
                     }`}
@@ -221,6 +228,7 @@ const AuthPage: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   disabled={isLoading}
+                  maxLength={254}
                   className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 ${
                     errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
@@ -248,6 +256,7 @@ const AuthPage: React.FC = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   disabled={isLoading}
+                  maxLength={128}
                   className={`block w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 ${
                     errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
@@ -288,6 +297,7 @@ const AuthPage: React.FC = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     disabled={isLoading}
+                    maxLength={128}
                     className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 ${
                       errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-gray-300'
                     }`}

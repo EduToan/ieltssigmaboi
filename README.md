@@ -122,7 +122,9 @@ POST /api/users/login
 - Persistent login state with localStorage
 
 ### Security Features (Demo Level)
-- Input sanitization
+- Input sanitization and validation
+- Length limits on all input fields
+- Character filtering for names and emails
 - SQL injection prevention (via Supabase)
 - XSS protection
 - Form validation
@@ -154,6 +156,7 @@ POST /api/users/login
 
 ### Error Handling
 - Comprehensive error messages
+- Input validation and sanitization
 - Network error handling
 - Form validation errors
 - Database constraint errors
@@ -177,6 +180,8 @@ POST /api/users/login
    - Password reset functionality
    - Two-factor authentication
    - Social login options
+   - Advanced input sanitization
+   - Rate limiting for login attempts
 
 3. **Monitoring**
    - Error logging

@@ -1,6 +1,27 @@
 import { supabase } from '../lib/supabase';
 import type { User, UserWithStats } from '../lib/supabase';
 
+/**
+ * Sanitize user input to prevent potential security issues
+ */
+const sanitizeInput = (input: string): string => {
+  return input
+    .trim()
+    .replace(/[<>]/g, '') // Remove potential HTML/script tags
+    .substring(0, 255); // Limit length to prevent buffer overflow
+};
+
+/**
+ * Validate and sanitize email input
+ */
+const sanitizeEmail = (email: string): string => {
+  return email
+    .toLowerCase()
+    .trim()
+    .replace(/[<>'"]/g, '') // Remove quotes and HTML chars
+    .substring(0, 254); // RFC 5321 email length limit
+};
+
 export interface RegisterData {
   name: string;
   email: string;
@@ -25,11 +46,32 @@ export interface AuthResponse {
  */
 export const registerUser = async (userData: RegisterData): Promise<AuthResponse> => {
   try {
+    // Sanitize all inputs
+    const sanitizedName = sanitizeInput(userData.name);
+    const sanitizedEmail = sanitizeEmail(userData.email);
+    const sanitizedPassword = userData.password.substring(0, 128); // Limit password length
+
+    // Additional validation
+    if (!sanitizedName || sanitizedName.length < 2) {
+      return {
+        success: false,
+        message: 'Name must be at least 2 characters long and contain valid characters.'
+      };
+    }
+
+    if (!isValidEmail(sanitizedEmail)) {
+      return {
+        success: false,
+        message: 'Please provide a valid email address.'
+      };
+    }
+
     // Check if user already exists
+    // Using Supabase's parameterized queries - SAFE from SQL injection
     const { data: existingUser, error: checkError } = await supabase
       .from('users')
       .select('email')
-      .eq('email', userData.email.toLowerCase())
+      .eq('email', sanitizedEmail)
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') {
@@ -46,13 +88,14 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
     // Create new user
     // WARNING: Password is stored as plain text for demo purposes only!
     // In production, use: const hashedPassword = await bcrypt.hash(userData.password, 12);
+    // Using Supabase's parameterized insert - SAFE from SQL injection
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([
         {
-          name: userData.name.trim(),
-          email: userData.email.toLowerCase().trim(),
-          password: userData.password // SECURITY WARNING: Plain text password!
+          name: sanitizedName,
+          email: sanitizedEmail,
+          password: sanitizedPassword // SECURITY WARNING: Plain text password!
         }
       ])
       .select()
@@ -98,11 +141,16 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
  */
 export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => {
   try {
+    // Sanitize inputs
+    const sanitizedEmail = sanitizeEmail(loginData.email);
+    const sanitizedPassword = loginData.password.substring(0, 128);
+
     // Find user by email
+    // Using Supabase's parameterized queries - SAFE from SQL injection
     const { data: user, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('email', loginData.email.toLowerCase().trim())
+      .eq('email', sanitizedEmail)
       .single();
 
     if (userError || !user) {
@@ -115,7 +163,7 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
     // Verify password
     // WARNING: Plain text comparison for demo purposes only!
     // In production, use: const isValidPassword = await bcrypt.compare(loginData.password, user.password);
-    if (user.password !== loginData.password) {
+    if (user.password !== sanitizedPassword) {
       return {
         success: false,
         message: 'Invalid email or password. Please check your credentials and try again.'
@@ -168,9 +216,11 @@ const getUserWithStats = async (userId: string): Promise<UserWithStats> => {
 
 /**
  * Validate email format
+ * Enhanced regex for better email validation
  */
 export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // More comprehensive email validation regex
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return emailRegex.test(email);
 };
 
