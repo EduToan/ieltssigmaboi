@@ -12,20 +12,23 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Database types
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  password: string; // NOTE: In production, this should be hashed!
+  name: string | null;
+  email: string | null;
+  password: string | null; // DEMO FIELD — NOT USED FOR LOGIN. DO NOT STORE REAL PASSWORDS.
   created_at: string;
   updated_at: string;
 }
 
 export interface UserStats {
+  id: string;
   quizzes_taken: number;
   completion_rate: number;
   average_score: number;
   last_quiz_date: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserWithStats extends User {
-  stats: UserStats;
+  stats: UserStats[];
 }

@@ -17,25 +17,14 @@ A comprehensive IELTS preparation platform with user authentication.
 
 **⚠️ IMPORTANT: This is a DEMO implementation only!**
 
-For demonstration purposes, passwords are stored as **PLAIN TEXT** in the database. This is **NOT SECURE** for production use!
+Supabase Auth manages real passwords. The `public.users.password` column is a demo field and is **NOT** used for authentication. **DO NOT STORE REAL PASSWORDS** in this column.
 
-**For Production:**
-```javascript
-// Instead of storing plain text passwords:
-password: userData.password // ❌ DEMO ONLY
-
-// Use proper password hashing:
-const hashedPassword = await bcrypt.hash(userData.password, 12); // ✅ PRODUCTION
-```
-
-**Required for Production:**
-1. Install bcrypt: `npm install bcrypt @types/bcrypt`
-2. Hash passwords before storing
-3. Compare hashed passwords during login
-4. Implement proper session management
-5. Add rate limiting for login attempts
-6. Use HTTPS in production
-7. Implement proper error logging
+For production deployments:
+1. Remove the demo `password` column from `public.users`.
+2. Keep all authentication through Supabase Auth.
+3. Never expose the service role key to the client.
+4. Use HTTPS and proper session management.
+5. Add rate limiting and robust error logging.
 
 ## 🚀 Setup Instructions
 
@@ -50,7 +39,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ### 3. Database Migration
-The migration file `supabase/migrations/create_users_and_stats.sql` will automatically create:
+The migration file `supabase/migrations/20250827120000_users_user_stats_rls.sql` will automatically create:
 - `users` table for user accounts
 - `user_stats` table for tracking user progress
 - Proper indexes and constraints
@@ -64,7 +53,7 @@ users (
   id uuid PRIMARY KEY,
   name text NOT NULL,
   email text UNIQUE NOT NULL,
-  password text NOT NULL, -- ⚠️ PLAIN TEXT FOR DEMO ONLY
+  password text, -- DEMO FIELD — NOT USED FOR LOGIN. DO NOT STORE REAL PASSWORDS.
   created_at timestamptz,
   updated_at timestamptz
 )
@@ -167,8 +156,7 @@ POST /api/users/login
 ## 🚀 Next Steps for Production
 
 1. **Security Hardening**
-   - Implement bcrypt password hashing
-   - Add JWT tokens for session management
+   - Remove demo password column and rely solely on Supabase Auth
    - Implement rate limiting
    - Add CSRF protection
 
