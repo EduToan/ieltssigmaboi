@@ -29,14 +29,6 @@ const HomePage: React.FC = () => {
                   Bắt đầu luyện thi
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
-                {!isAuthenticated && (
-                  <Link
-                    to="/auth"
-                    className="border border-blue-600 text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center justify-center"
-                  >
-                    Tạo tài khoản miễn phí
-                  </Link>
-                )}
               </div>
             </div>
             <div className="relative">

@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
+import { getUserWithStats, logoutUser } from '../services/authService';
 import type { UserWithStats } from '../lib/supabase';
 
 interface AuthContextType {
@@ -6,7 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (user: UserWithStats) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (user: UserWithStats) => void;
 }
 
@@ -21,38 +23,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load user from localStorage on app start
-    const loadUser = () => {
+    // Get initial session
+    const getInitialSession = async () => {
       try {
-        const storedUser = localStorage.getItem('ielts_user');
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const userWithStats = await getUserWithStats();
+          setUser(userWithStats);
         }
       } catch (error) {
-        console.error('Error loading user from localStorage:', error);
-        localStorage.removeItem('ielts_user');
+        console.error('Error getting initial session:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadUser();
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const userWithStats = await getUserWithStats();
+          setUser(userWithStats);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = (userData: UserWithStats) => {
     setUser(userData);
-    localStorage.setItem('ielts_user', JSON.stringify(userData));
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('ielts_user');
+  const logout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const updateUser = (userData: UserWithStats) => {
     setUser(userData);
-    localStorage.setItem('ielts_user', JSON.stringify(userData));
   };
 
   const value = {

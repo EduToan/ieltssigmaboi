@@ -40,16 +40,14 @@ export interface AuthResponse {
 }
 
 /**
- * Register a new user
- * NOTE: In production, passwords MUST be hashed using bcrypt or similar!
- * This plain text storage is for demo purposes only and is NOT secure!
+ * Register a new user using Supabase Auth
+ * Creates auth user + profile row with RLS protection
  */
 export const registerUser = async (userData: RegisterData): Promise<AuthResponse> => {
   try {
     // Sanitize all inputs
     const sanitizedName = sanitizeInput(userData.name);
     const sanitizedEmail = sanitizeEmail(userData.email);
-    const sanitizedPassword = userData.password.substring(0, 128); // Limit password length
 
     // Additional validation
     if (!sanitizedName || sanitizedName.length < 2) {
@@ -66,51 +64,59 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
       };
     }
 
-    // Check if user already exists
-    // Using Supabase's parameterized queries - SAFE from SQL injection
-    const { data: existingUser, error: checkError } = await supabase
-      .from('users')
-      .select('email')
-      .eq('email', sanitizedEmail)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      throw checkError;
-    }
-
-    if (existingUser) {
+    const passwordValidation = validatePassword(userData.password);
+    if (!passwordValidation.isValid) {
       return {
         success: false,
-        message: 'Tài khoản với email này đã tồn tại. Vui lòng thử đăng nhập.'
+        message: passwordValidation.message
       };
     }
 
-    // Create new user
-    // WARNING: Password is stored as plain text for demo purposes only!
-    // In production, use: const hashedPassword = await bcrypt.hash(userData.password, 12);
-    // Using Supabase's parameterized insert - SAFE from SQL injection
-    const { data: newUser, error: insertError } = await supabase
+    // 1. Create auth user with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: sanitizedEmail,
+      password: userData.password,
+    });
+
+    if (authError) {
+      if (authError.message.includes('already registered')) {
+        return {
+          success: false,
+          message: 'Tài khoản với email này đã tồn tại. Vui lòng thử đăng nhập.'
+        };
+      }
+      throw authError;
+    }
+
+    if (!authData.user) {
+      return {
+        success: false,
+        message: 'Không thể tạo tài khoản. Vui lòng thử lại.'
+      };
+    }
+
+    // 2. Create profile row (RLS will ensure user can only create their own)
+    const { error: profileError } = await supabase
       .from('users')
       .insert([
         {
+          id: authData.user.id,
           name: sanitizedName,
           email: sanitizedEmail,
-          password: sanitizedPassword // SECURITY WARNING: Plain text password!
+          password: 'DEMO_ONLY_NOT_USED' // DEMO FIELD - NOT USED FOR AUTH
         }
-      ])
-      .select()
-      .single();
+      ]);
 
-    if (insertError) {
-      throw insertError;
+    if (profileError) {
+      throw profileError;
     }
 
-    // Initialize user stats
-    await supabase
+    // 3. Initialize user stats
+    const { error: statsError } = await supabase
       .from('user_stats')
       .insert([
         {
-          user_id: newUser.id,
+          user_id: authData.user.id,
           quizzes_taken: 0,
           completion_rate: 0,
           average_score: 0,
@@ -118,8 +124,12 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
         }
       ]);
 
-    // Get user with stats
-    const userWithStats = await getUserWithStats(newUser.id);
+    if (statsError) {
+      throw statsError;
+    }
+
+    // 4. Get user with stats
+    const userWithStats = await getUserWithStats();
 
     return {
       success: true,
@@ -136,46 +146,39 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
 };
 
 /**
- * Login user
- * NOTE: In production, use bcrypt.compare(password, hashedPassword) for password verification!
+ * Login user using Supabase Auth
  */
 export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => {
   try {
     // Sanitize inputs
     const sanitizedEmail = sanitizeEmail(loginData.email);
-    const sanitizedPassword = loginData.password.substring(0, 128);
 
-    // Find user by email
-    // Using Supabase's parameterized queries - SAFE from SQL injection
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', sanitizedEmail)
-      .single();
+    // Sign in with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: sanitizedEmail,
+      password: loginData.password,
+    });
 
-    if (userError || !user) {
+    if (authError) {
       return {
         success: false,
         message: 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra và thử lại.'
       };
     }
 
-    // Verify password
-    // WARNING: Plain text comparison for demo purposes only!
-    // In production, use: const isValidPassword = await bcrypt.compare(loginData.password, user.password);
-    if (user.password !== sanitizedPassword) {
+    if (!authData.user) {
       return {
         success: false,
-        message: 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra và thử lại.'
+        message: 'Đăng nhập thất bại. Vui lòng thử lại.'
       };
     }
 
-    // Get user with stats
-    const userWithStats = await getUserWithStats(user.id);
+    // Get user with stats (RLS will ensure only own data is returned)
+    const userWithStats = await getUserWithStats();
 
     return {
       success: true,
-      message: `Chào mừng trở lại, ${user.name}!`,
+      message: `Chào mừng trở lại, ${userWithStats?.name || 'bạn'}!`,
       user: userWithStats
     };
   } catch (error) {
@@ -188,38 +191,66 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
 };
 
 /**
- * Get user with their statistics
+ * Logout user
  */
-const getUserWithStats = async (userId: string): Promise<UserWithStats> => {
-  const { data: user } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
+export const logoutUser = async (): Promise<void> => {
+  await supabase.auth.signOut();
+};
 
-  const { data: stats } = await supabase
-    .from('user_stats')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
-
-  return {
-    ...user,
-    stats: stats || {
-      quizzes_taken: 0,
-      completion_rate: 0,
-      average_score: 0,
-      last_quiz_date: null
+/**
+ * Get current user with stats (RLS-protected)
+ */
+export const getUserWithStats = async (): Promise<UserWithStats | null> => {
+  try {
+    // Get current auth user
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    
+    if (!authUser) {
+      return null;
     }
-  };
+
+    // Get profile (RLS ensures only own profile)
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select('id, name, email, created_at, updated_at')
+      .single();
+
+    if (profileError) {
+      throw profileError;
+    }
+
+    // Get stats (RLS ensures only own stats)
+    const { data: stats, error: statsError } = await supabase
+      .from('user_stats')
+      .select('*')
+      .single();
+
+    if (statsError && statsError.code !== 'PGRST116') {
+      throw statsError;
+    }
+
+    return {
+      ...profile,
+      stats: stats || null
+    };
+  } catch (error) {
+    console.error('Error getting user with stats:', error);
+    return null;
+  }
+};
+
+/**
+ * Check if user is authenticated
+ */
+export const getCurrentUser = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
 };
 
 /**
  * Validate email format
- * Enhanced regex for better email validation
  */
 export const isValidEmail = (email: string): boolean => {
-  // More comprehensive email validation regex
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return emailRegex.test(email);
 };

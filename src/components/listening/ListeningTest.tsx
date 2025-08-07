@@ -20,7 +20,6 @@ const ListeningTest: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [timeLeft, setTimeLeft] = useState(58 * 60); // 58 minutes in seconds
   const [volume, setVolume] = useState(75);
-  // Audio playback state can be added when implementing audio controls
   const [reviewQuestions, setReviewQuestions] = useState<number[]>([]);
   const [showHeader, setShowHeader] = useState(true);
   const [showTimer, setShowTimer] = useState(true);
@@ -69,6 +68,8 @@ const ListeningTest: React.FC = () => {
 
   // Timer effect
   useEffect(() => {
+    if (timeLeft <= 0) return;
+    
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 0) {
@@ -80,7 +81,7 @@ const ListeningTest: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [timeLeft]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -123,6 +124,14 @@ const ListeningTest: React.FC = () => {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+  };
+
+  const toggleReview = (questionId: number) => {
+    setReviewQuestions(prev =>
+      prev.includes(questionId)
+        ? prev.filter(id => id !== questionId)
+        : [...prev, questionId]
+    );
   };
 
   const getPartQuestions = (part: number) => {
@@ -558,7 +567,11 @@ const ListeningTest: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              {showTimer && <span className="text-sm">{formatTime(timeLeft)}</span>}
+              {showTimer && (
+                <span className="text-sm font-mono bg-gray-700 px-2 py-1 rounded">
+                  {formatTime(timeLeft)}
+                </span>
+              )}
               <button
                 onClick={() => setShowTimer(!showTimer)}
                 className="p-2 bg-gray-600 rounded hover:bg-gray-500"
@@ -699,15 +712,9 @@ const ListeningTest: React.FC = () => {
               <input
                 type="checkbox"
                 checked={reviewQuestions.includes(currentQuestion)}
-                onChange={() =>
-                  setReviewQuestions(prev =>
-                    prev.includes(currentQuestion)
-                      ? prev.filter(id => id !== currentQuestion)
-                      : [...prev, currentQuestion]
-                  )
-                }
+                onChange={() => toggleReview(currentQuestion)}
               />
-              <span className="text-sm">Review</span>
+              <span className="text-sm">Đánh dấu xem lại</span>
             </label>
 
             <button className="p-2 bg-gray-200 rounded hover:bg-gray-300">
