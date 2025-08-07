@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Volume2, Settings, HelpCircle, Eye, EyeOff, Play, Pause } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Volume2, HelpCircle, Eye, EyeOff } from 'lucide-react';
+// No router links needed here
 
 interface Answer {
   id: string;
@@ -16,13 +16,14 @@ interface Question {
 }
 
 const ListeningTest: React.FC = () => {
-  const [currentPart, setCurrentPart] = useState(1);
+  const [currentPart] = useState(1);
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [timeLeft, setTimeLeft] = useState(58 * 60); // 58 minutes in seconds
   const [volume, setVolume] = useState(75);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showReview, setShowReview] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  // Audio playback state can be added when implementing audio controls
+  const [reviewQuestions, setReviewQuestions] = useState<number[]>([]);
+  const [showHeader, setShowHeader] = useState(true);
+  const [showTimer, setShowTimer] = useState(true);
   
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -84,7 +85,7 @@ const ListeningTest: React.FC = () => {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins} minutes left`;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -548,47 +549,58 @@ const ListeningTest: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-gray-800 text-white p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm">XXXX XXXXXXXX - 123456</span>
-            <div className="w-4 h-4 bg-gray-600 rounded"></div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <span className="text-sm">{formatTime(timeLeft)}</span>
-            
-            <button className="px-3 py-1 bg-gray-600 rounded text-sm hover:bg-gray-500">
-              Settings
-            </button>
-            
-            <button className="px-3 py-1 bg-gray-600 rounded text-sm hover:bg-gray-500 flex items-center space-x-1">
-              <HelpCircle className="w-4 h-4" />
-              <span>Help</span>
-            </button>
-            
-            <button 
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="px-3 py-1 bg-gray-600 rounded text-sm hover:bg-gray-500"
-            >
-              Hide
-            </button>
-            
-            {/* Volume Control */}
-            <div className="flex items-center space-x-2">
-              <Volume2 className="w-4 h-4" />
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={handleVolumeChange}
-                className="w-20"
-              />
+      {showHeader ? (
+        <div className="bg-gray-800 text-white p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm">XXXX XXXXXXXX - 123456</span>
+              <div className="w-4 h-4 bg-gray-600 rounded"></div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              {showTimer && <span className="text-sm">{formatTime(timeLeft)}</span>}
+              <button
+                onClick={() => setShowTimer(!showTimer)}
+                className="p-2 bg-gray-600 rounded hover:bg-gray-500"
+              >
+                {showTimer ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+              <button className="px-3 py-1 bg-gray-600 rounded text-sm hover:bg-gray-500">
+                Settings
+              </button>
+              <button className="px-3 py-1 bg-gray-600 rounded text-sm hover:bg-gray-500 flex items-center space-x-1">
+                <HelpCircle className="w-4 h-4" />
+                <span>Help</span>
+              </button>
+              <button
+                onClick={() => setShowHeader(false)}
+                className="px-3 py-1 bg-gray-600 rounded text-sm hover:bg-gray-500"
+              >
+                Hide
+              </button>
+              {/* Volume Control */}
+              <div className="flex items-center space-x-2">
+                <Volume2 className="w-4 h-4" />
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="w-20"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <button
+          onClick={() => setShowHeader(true)}
+          className="absolute top-2 left-2 bg-gray-800 text-white px-3 py-1 rounded text-sm hover:bg-gray-700"
+        >
+          Show Header
+        </button>
+      )}
 
       {/* Main Content */}
       <div className="p-6">
@@ -609,6 +621,8 @@ const ListeningTest: React.FC = () => {
                 className={`w-8 h-8 text-xs rounded ${
                   currentQuestion === num
                     ? 'bg-blue-600 text-white'
+                    : reviewQuestions.includes(num)
+                    ? 'bg-yellow-400 text-white'
                     : questions.find(q => q.id === num)?.userAnswer
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-200 hover:bg-gray-300'
@@ -627,6 +641,8 @@ const ListeningTest: React.FC = () => {
                 className={`w-8 h-8 text-xs rounded ${
                   currentQuestion === num
                     ? 'bg-blue-600 text-white'
+                    : reviewQuestions.includes(num)
+                    ? 'bg-yellow-400 text-white'
                     : questions.find(q => q.id === num)?.userAnswer
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-200 hover:bg-gray-300'
@@ -645,6 +661,8 @@ const ListeningTest: React.FC = () => {
                 className={`w-8 h-8 text-xs rounded ${
                   currentQuestion === num
                     ? 'bg-blue-600 text-white'
+                    : reviewQuestions.includes(num)
+                    ? 'bg-yellow-400 text-white'
                     : questions.find(q => q.id === num)?.userAnswer
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-200 hover:bg-gray-300'
@@ -663,6 +681,8 @@ const ListeningTest: React.FC = () => {
                 className={`w-8 h-8 text-xs rounded ${
                   currentQuestion === num
                     ? 'bg-blue-600 text-white'
+                    : reviewQuestions.includes(num)
+                    ? 'bg-yellow-400 text-white'
                     : questions.find(q => q.id === num)?.userAnswer
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-200 hover:bg-gray-300'
@@ -676,14 +696,24 @@ const ListeningTest: React.FC = () => {
           {/* Controls */}
           <div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2">
-              <input type="checkbox" checked={showReview} onChange={(e) => setShowReview(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={reviewQuestions.includes(currentQuestion)}
+                onChange={() =>
+                  setReviewQuestions(prev =>
+                    prev.includes(currentQuestion)
+                      ? prev.filter(id => id !== currentQuestion)
+                      : [...prev, currentQuestion]
+                  )
+                }
+              />
               <span className="text-sm">Review</span>
             </label>
-            
+
             <button className="p-2 bg-gray-200 rounded hover:bg-gray-300">
               <ArrowLeft className="w-4 h-4" />
             </button>
-            
+
             <button className="p-2 bg-gray-200 rounded hover:bg-gray-300">
               <ArrowRight className="w-4 h-4" />
             </button>
