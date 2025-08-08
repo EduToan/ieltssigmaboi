@@ -45,8 +45,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
-          const userWithStats = await getUserWithStats();
-          setUser(userWithStats);
+          // Load user profile asynchronously after sign-in
+          try {
+            const userWithStats = await getUserWithStats();
+            setUser(userWithStats);
+          } catch (error) {
+            console.error('Error loading user profile:', error);
+            // Fallback to basic user info from auth
+            const basicUser = {
+              id: session.user.id,
+              name: session.user.user_metadata?.name || 'User',
+              email: session.user.email || '',
+              created_at: session.user.created_at || new Date().toISOString(),
+              updated_at: session.user.updated_at || new Date().toISOString(),
+              stats: null
+            };
+            setUser(basicUser);
+          }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
         }
