@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
-import { getUserWithStats, logoutUser } from '../services/authService';
+import { logoutUser } from '../services/authService';
 import type { UserWithStats } from '../lib/supabase';
 
 interface AuthContextType {
@@ -23,19 +23,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // Get initial session
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
-        if (session?.user) {
-          const userWithStats = await getUserWithStats();
-          setUser(userWithStats);
+        if (session?.user && mounted) {
+          // Create basic user object from auth session
+          const basicUser: UserWithStats = {
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            created_at: session.user.created_at || new Date().toISOString(),
+            updated_at: session.user.updated_at || new Date().toISOString(),
+            stats: null
+          };
+          setUser(basicUser);
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -44,33 +56,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+
         if (event === 'SIGNED_IN' && session?.user) {
-          // Load user profile asynchronously after sign-in
-          try {
-            const userWithStats = await getUserWithStats();
-            setUser(userWithStats);
-          } catch (error) {
-            console.error('Error loading user profile:', error);
-            // Fallback to basic user info from auth
-            const basicUser = {
-              id: session.user.id,
-              name: session.user.user_metadata?.name || 'User',
-              email: session.user.email || '',
-              created_at: session.user.created_at || new Date().toISOString(),
-              updated_at: session.user.updated_at || new Date().toISOString(),
-              stats: null
-            };
-            setUser(basicUser);
-          }
+          const basicUser: UserWithStats = {
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            created_at: session.user.created_at || new Date().toISOString(),
+            updated_at: session.user.updated_at || new Date().toISOString(),
+            stats: null
+          };
+          setUser(basicUser);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
         }
+        
         setIsLoading(false);
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []); // Empty dependency array - only run once
 
   const login = (userData: UserWithStats) => {
     setUser(userData);

@@ -173,15 +173,14 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
       };
     }
 
-    // For login, we don't need to wait for user stats - let the context handle it
-    // This makes login much faster
+    // Return basic user info - AuthContext will handle the session
     const userProfile = {
       id: authData.user.id,
-      name: authData.user.user_metadata?.name || 'User',
+      name: authData.user.user_metadata?.name || authData.user.email?.split('@')[0] || 'User',
       email: authData.user.email || sanitizedEmail,
       created_at: authData.user.created_at || new Date().toISOString(),
       updated_at: authData.user.updated_at || new Date().toISOString(),
-      stats: null // Will be loaded by context later
+      stats: null
     };
 
     return {
