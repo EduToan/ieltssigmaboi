@@ -216,6 +216,10 @@ export const getUserWithStats = async (): Promise<UserWithStats | null> => {
       .single();
 
     if (profileError) {
+      // Handle case where user profile doesn't exist yet
+      if (profileError.code === 'PGRST116') {
+        return null;
+      }
       throw profileError;
     }
 
