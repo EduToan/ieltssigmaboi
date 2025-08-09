@@ -76,10 +76,21 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: sanitizedEmail,
       password: userData.password,
+      options: {
+        data: {
+          name: sanitizedName
+        }
+      }
     });
 
     if (authError) {
       if (authError.message.includes('already registered')) {
+        return {
+          success: false,
+          message: 'Tài khoản với email này đã tồn tại. Vui lòng thử đăng nhập.'
+        };
+      }
+      if (authError.message.includes('User already registered')) {
         return {
           success: false,
           message: 'Tài khoản với email này đã tồn tại. Vui lòng thử đăng nhập.'
@@ -108,7 +119,8 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
       ]);
 
     if (profileError) {
-      throw profileError;
+      console.error('Profile creation error:', profileError);
+      // The user is still created in auth, just without extended profile
     }
 
     // 3. Initialize user stats
@@ -125,7 +137,8 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
       ]);
 
     if (statsError) {
-      throw statsError;
+      console.error('Stats creation error:', statsError);
+      // Don't fail registration if stats creation fails
     }
 
     // 4. Get user with stats
@@ -162,7 +175,9 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
     if (authError) {
       return {
         success: false,
-        message: 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra và thử lại.'
+        message: authError.message.includes('Invalid login credentials') 
+          ? 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra và thử lại.'
+          : 'Đăng nhập thất bại. Vui lòng thử lại.'
       };
     }
 
@@ -185,7 +200,7 @@ export const loginUser = async (loginData: LoginData): Promise<AuthResponse> => 
 
     return {
       success: true,
-      message: `Chào mừng trở lại, ${userProfile.name}!`,
+      message: `Đăng nhập thành công! Chào mừng trở lại, ${userProfile.name}!`,
       user: userProfile
     };
   } catch (error) {
