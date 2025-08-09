@@ -106,24 +106,7 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
       };
     }
 
-    // 2. Create profile row (RLS will ensure user can only create their own)
-    const { error: profileError } = await supabase
-      .from('users')
-      .insert([
-        {
-          id: authData.user.id,
-          name: sanitizedName,
-          email: sanitizedEmail,
-          password: 'DEMO_ONLY_NOT_USED' // DEMO FIELD - NOT USED FOR AUTH
-        }
-      ]);
-
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-      // The user is still created in auth, just without extended profile
-    }
-
-    // 3. Initialize user stats
+    // 2. Initialize user stats
     const { error: statsError } = await supabase
       .from('user_stats')
       .insert([
@@ -141,13 +124,20 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
       // Don't fail registration if stats creation fails
     }
 
-    // 4. Get user with stats
-    const userWithStats = await getUserWithStats();
+    // 3. Return success with basic user info
+    const userProfile = {
+      id: authData.user.id,
+      name: sanitizedName,
+      email: sanitizedEmail,
+      created_at: authData.user.created_at || new Date().toISOString(),
+      updated_at: authData.user.updated_at || new Date().toISOString(),
+      stats: null
+    };
 
     return {
       success: true,
       message: 'Tạo tài khoản thành công! Chào mừng đến với IELTS Sigma Boy!',
-      user: userWithStats
+      user: userProfile
     };
   } catch (error) {
     console.error('Registration error:', error);
