@@ -135,9 +135,12 @@ const ReadingSection: React.FC = () => {
                   <p className="text-blue-100 mb-4">
                     Bạn đã chọn một bài thi luyện tập. Hãy đảm bảo bạn có 60 phút để hoàn thành bài thi.
                   </p>
-                  <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                  <Link
+                    to="/test/reading/practice"
+                    className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+                  >
                     Bắt đầu bài thi đọc
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>

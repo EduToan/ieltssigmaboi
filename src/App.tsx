@@ -6,6 +6,7 @@ import HomePage from './components/HomePage';
 import AuthPage from './components/AuthPage';
 import TestDashboard from './components/TestDashboard';
 import ReadingSection from './components/skills/ReadingSection';
+import ReadingTest from './components/reading/ReadingTest';
 import WritingSection from './components/skills/WritingSection';
 import ListeningSection from './components/skills/ListeningSection';
 import ListeningTest from './components/listening/ListeningTest';
