@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Clock, BookOpen, Eye, EyeOff, HelpCircle, Menu, Wifi, Bell, Edit3 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Eye, EyeOff, Menu, Wifi, Bell, Edit3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Question {
@@ -95,7 +95,7 @@ Anthony Picciano studied student attitudes toward interaction, presence, and cou
       }
     ],
     questions: [
-      // Passage 1 Questions
+      // Passage 1 Questions (1-13)
       { id: 1, type: 'true-false-not-given', question: 'Some physical evidence of Uruk still exists in Iraq.', correctAnswer: 'TRUE', userAnswer: '', passage: 1 },
       { id: 2, type: 'true-false-not-given', question: 'The people of Uruk lived in large apartment buildings.', correctAnswer: 'NOT GIVEN', userAnswer: '', passage: 1 },
       { id: 3, type: 'true-false-not-given', question: 'Builders in Uruk frequently experimented with new construction methods.', correctAnswer: 'TRUE', userAnswer: '', passage: 1 },
@@ -110,7 +110,7 @@ Anthony Picciano studied student attitudes toward interaction, presence, and cou
       { id: 12, type: 'fill-in-blank', question: 'People wrote on surfaces made of _______.', correctAnswer: 'clay', userAnswer: '', passage: 1 },
       { id: 13, type: 'fill-in-blank', question: 'Written records remained undamaged after _______ in archives.', correctAnswer: 'fires', userAnswer: '', passage: 1 },
       
-      // Passage 2 Questions
+      // Passage 2 Questions (14-26)
       { id: 14, type: 'matching', question: 'A species that signals its young to move somewhere safer.', correctAnswer: 'C', userAnswer: '', passage: 2 },
       { id: 15, type: 'matching', question: 'An instance where sound helps an animal escape.', correctAnswer: 'G', userAnswer: '', passage: 2 },
       { id: 16, type: 'matching', question: 'A creature that can adapt its camouflage to match many backgrounds.', correctAnswer: 'D', userAnswer: '', passage: 2 },
@@ -125,7 +125,7 @@ Anthony Picciano studied student attitudes toward interaction, presence, and cou
       { id: 25, type: 'fill-in-blank', question: 'It imitates the cleaner wrasse, which removes _______ from other fish.', correctAnswer: 'parasites', userAnswer: '', passage: 2 },
       { id: 26, type: 'fill-in-blank', question: 'This allows it to approach its _______ unnoticed.', correctAnswer: 'prey', userAnswer: '', passage: 2 },
       
-      // Passage 3 Questions
+      // Passage 3 Questions (27-40)
       { id: 27, type: 'multiple-choice', question: 'Classroom-based learning involves:', options: ['A. Individual study', 'B. Online forums', 'C. Video lectures', 'D. Exchange of ideas'], correctAnswer: 'D', userAnswer: '', passage: 3 },
       { id: 28, type: 'multiple-choice', question: 'Online learning requires:', options: ['A. Single focus', 'B. Linear progression', 'C. Face-to-face contact', 'D. Following multiple discussions'], correctAnswer: 'D', userAnswer: '', passage: 3 },
       { id: 29, type: 'multiple-choice', question: 'Sproull & Kiesler warn that:', options: ['A. Students are lazy', 'B. Technology fails', 'C. Information overload occurs', 'D. Feedback to students can be delayed'], correctAnswer: 'D', userAnswer: '', passage: 3 },
@@ -484,6 +484,12 @@ Format your response as JSON:
               <Bell className="w-5 h-5 text-gray-600" />
               <Menu className="w-5 h-5 text-gray-600" />
               <Edit3 className="w-5 h-5 text-gray-600" />
+              <button
+                onClick={() => setShowTimer(!showTimer)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                {showTimer ? <EyeOff className="w-5 h-5 text-gray-600" /> : <Eye className="w-5 h-5 text-gray-600" />}
+              </button>
             </div>
           </div>
         </div>
