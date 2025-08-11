@@ -129,20 +129,20 @@ const ReadingSection: React.FC = () => {
                 ))}
               </div>
 
-              {selectedTest && (
-                <div className="mt-8 p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl text-white">
-                  <h3 className="text-lg font-semibold mb-2">Sẵn sàng bắt đầu?</h3>
-                  <p className="text-blue-100 mb-4">
-                    Bạn đã chọn một bài thi luyện tập. Hãy đảm bảo bạn có 60 phút để hoàn thành bài thi.
-                  </p>
-                  <Link
-                    to="/test/reading/practice"
-                    className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-                  >
-                    Bắt đầu bài thi đọc
-                  </Link>
-                </div>
-              )}
+                  {selectedTest && (
+                    <div className="mt-8 p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl text-white">
+                      <h3 className="text-lg font-semibold mb-2">Sẵn sàng bắt đầu?</h3>
+                      <p className="text-blue-100 mb-4">
+                        Bạn đã chọn một bài thi luyện tập. Hãy đảm bảo bạn có 60 phút để hoàn thành bài thi.
+                      </p>
+                      <Link
+                        to={`/test/reading/${selectedTest}`} // ✅ Redirects to ReadingTest.tsx route
+                        className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+                      >
+                        Bắt đầu bài thi đọc
+                      </Link>
+                    </div>
+                  )}
             </div>
           </div>
 
